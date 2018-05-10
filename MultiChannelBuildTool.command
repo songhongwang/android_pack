@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #!/usr/bin/python
 import zipfile
@@ -28,6 +28,9 @@ for file in os.listdir('source_apk'):
         if(extension == 'apk'):
             src_apks.append("source_apk/" + file)
  
+if len(src_apks) == 0:
+    print("程序异常：请把原包apk放到source_apk目录中\n")
+
 
 def pack(channel_file):
     f = open(channel_file)
@@ -93,7 +96,7 @@ for file in os.listdir('info/channel'):
         pack(dest_channel)
 
 ## 打包完成后 拷贝或移动目录
-print('稍等一下，正在清理战场...\n')
+print('稍等，正在清理战场...\n')
 time.sleep(2)
 
 temp_dir = os.path.splitext(src_apks[0])[0].split('/',2)[1]
