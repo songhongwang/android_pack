@@ -1,7 +1,7 @@
 #从本地向FTP批量上传文档
 #!/bin/sh
-ftp -v -n qxu1649270087.my3w.com<<EOF
-user qxu1649270087 shw286147206
+ftp -v -n xxx.xxx.xxx.xx<<EOF
+user xx xxx
 binary
 hash
 cd myfolder/download
