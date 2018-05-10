@@ -1,13 +1,15 @@
+# -*- coding: utf-8 -*-
 #!/usr/bin/python
-# coding=utf-8
 import zipfile
 import shutil
 import os
 import sys
+import time
 
 #进入当前目录
 path = os.path.dirname(sys.argv[0])  
-os.chdir(path)
+if path != '':
+    os.chdir(path)
 
 # 空文件 便于写入此空文件到apk包中作为channel文件
 src_empty_file = 'info/czt.txt'
@@ -15,6 +17,7 @@ src_empty_file = 'info/czt.txt'
 f = open(src_empty_file, 'w') 
 f.close()
 
+print("打包中，请等待几分钟...\n")
 # 获取当前目录中所有的apk源包
 src_apks = []
 # python3 : os.listdir()即可，这里使用兼容Python2的os.listdir('.')
@@ -78,11 +81,10 @@ def pack(channel_file):
             zipped.write(src_empty_file, empty_channel_file)
             # 关闭zip流
             zipped.close()
-
+            print('>>> build apk >>> ' + target_apk)
 
 
 ## 获取渠道列表
-# channel_file = 'info/channel.txt'
 for file in os.listdir('info/channel'): 
     extension = os.path.splitext(file)[1][1:]
     if extension == 'txt':
@@ -90,19 +92,48 @@ for file in os.listdir('info/channel'):
         pack(dest_channel)
 
 ## 打包完成后 拷贝或移动目录
-## 1 share 目录的移动
-temp_dir = os.path.splitext(src_apks[0])
-release_dir = 'release_' + temp_dir[0]
+print('稍等一下，正在清理战场...\n')
+time.sleep(2)
+
+temp_dir = os.path.splitext(src_apks[0])[0].split('/',2)[1]
+release_dir = 'release_' + temp_dir
+
+## copy share目录中的aa.apk 改名为tangdou_aa.apk
 sourceDir = release_dir + "/" + 'share' + "/" + 'aa.apk'
-targetDir = release_dir + "/" + 'share' + "/" + 'tangdou_aa.apk'
+targetDir = release_dir+ "/" + 'share' + "/" + 'tangdou_aa.apk'
 shutil.copy(sourceDir, targetDir)
+print(">>> copy apk " + sourceDir + " >>> " + targetDir)
+
+## channel_sem 目录中的**800渠道包 复制一份到 sem0目录
+sem0_dir = release_dir + "/" + "sem0"
+if not os.path.exists(sem0_dir):
+    os.makedirs(sem0_dir)
+apk_v = os.path.splitext(src_apks[0])[0].split('_',5)[2].replace('v','')
+sourceDir = release_dir + "/" + 'channel_sem' + "/" + "tangdou_" + apk_v +'_800.apk'
+targetDir = release_dir+ "/" + 'sem0' + "/" + 'tangdou.apk'
+shutil.copy(sourceDir, targetDir)
+print(">>> copy apk " + sourceDir + " >>> " + targetDir)
 
 
-## 2 
 
+## 重命名 channel_sem 目录为当前版号
+version_num = os.path.splitext(src_apks[0])[0].split('_',5)[2]
+num_array = version_num.replace("v","").split('.',3)
+v_dir = ''.join(map(str, num_array))
+print(v_dir)
+rename_src_dir = release_dir + "/" + "channel_sem"
+rename_dest_dir = release_dir + "/" + v_dir
+os.rename(rename_src_dir, rename_dest_dir) 
 
-## 上传到ftp
-
+## copy 原包到share目录 tangdou.apk
+sourceDir = src_apks[0]
+targetDir = release_dir+ "/" + 'share' + "/" + 'tangdou.apk'
+shutil.copy(sourceDir, targetDir)
+print(">>> copy apk " + sourceDir + " >>> " + targetDir)
+ 
+## 完成
+print("打完收工！！！")
+ 
 
 
 
