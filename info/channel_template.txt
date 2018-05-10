@@ -1,0 +1,20 @@
+// # 此文件只是模板，对于打包脚本没有关系
+
+xiaomi
+oppo
+huawei
+vivo
+yingyongbao
+baidu
+bdsem_999
+360
+uc
+wandoujia
+meizu
+lianxiang
+sogou
+A001
+A002
+A003
+A004
+A005
